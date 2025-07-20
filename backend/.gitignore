@@ -1,0 +1,21 @@
+# Ignore environment variable files
+.env
+.env.local
+
+# Ignore log files
+*.log
+
+# Ignore node_modules (if using Node.js)
+node_modules/
+
+# Ignore build output
+dist/
+build/
+
+# Ignore database files (if any)
+*.sqlite
+*.db
+
+# Ignore system files
+.DS_Store
+Thumbs.db
