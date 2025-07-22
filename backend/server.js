@@ -11,7 +11,7 @@ import employeeRoute from "./routes/employeeRoute.js";
 
 // app config
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 connectDB();
 connectCloudinary();
 
