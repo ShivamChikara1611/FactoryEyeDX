@@ -11,6 +11,7 @@ const AdminContextProvider = (props) => {
     const [aToken, setAToken] = useState(localStorage.getItem('aToken')?localStorage.getItem('aToken'):"");
 
     const [employees, setEmployees] = useState([]);
+    const [sensors, setSensors] = useState([]);
 
 
     // Getting all the employees list.
@@ -39,14 +40,14 @@ const AdminContextProvider = (props) => {
     const getAllSensors = async () => {
 
         try{
-            const { data } = await axios.get(backendUrl + '/api/admin/sensors',{}, {
+            const { data } = await axios.post(backendUrl + '/api/admin/sensors',{}, {
                 headers: {
                     aToken
                 }
             });
 
             if(data.success){
-                setEmployees(data.employees);
+                setSensors(data.sensors);
                 console.log(data)
             } else {
                 toast.error(data.message);
@@ -59,7 +60,7 @@ const AdminContextProvider = (props) => {
 
 
     const value = {
-        aToken, setAToken, getAllEmployees, employees, getAllSensors,
+        aToken, setAToken, getAllEmployees, employees, getAllSensors, sensors
     };
 
     return (
