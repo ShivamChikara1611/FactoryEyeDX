@@ -15,7 +15,7 @@ const Login = () => {
     const {setDToken} = useContext(EmployeeContext);
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
-    
+
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
@@ -29,6 +29,7 @@ const Login = () => {
                 if (data.success) {
                     localStorage.setItem('aToken', data.token);
                     setAToken(data.token);
+                    toast.success("Admin logged in Successfully");
                 }
                 else{
                     toast.error(data.message);
