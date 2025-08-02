@@ -1,31 +1,18 @@
 import jwt from "jsonwebtoken";
 
+// employee authentication middleware
 
-// doctor authentication middleware
+const authEmployee = (req, res, next) => {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) return res.status(401).json({ success: false, message: "Please Login First!" });
 
-const authEmployee = async (req, res, next) => {
     try {
-        const { etoken } = req.headers;
-        if(!etoken){
-            return res.json({
-                success: false,
-                message: "Not Authorized Login Again"
-            })
-        }
-        
-        //verify token
-        const token_decode = jwt.verify(etoken, process.env.JWT_SECRET);
-
-        req.body.empId = token_decode.id;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.employeeId = decoded.id; // <-- Ensure this line exists
         next();
-
-    } catch (error) {
-        console.log(error);
-        res.json({
-            success: false,
-            message: error.message
-        })
+    } catch (err) {
+        res.status(401).json({ success: false, message: "Invalid employee" });
     }
-}
+};
 
 export default authEmployee;

@@ -34,7 +34,7 @@ app.listen(port, () => {
 });
 
 // initialize fake data generation
-// setInterval(generateFakeData, 1000);
+// setInterval(generateFakeData, 100);
 
 // initialize fake employees
 // generateFakeEmployees()

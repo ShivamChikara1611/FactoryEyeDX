@@ -1,44 +1,8 @@
-import employeeModel from "../models/employeeModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import employeeModel from "../models/employeeModel.js";
 import sensorModel from "../models/sensorModel.js";
 import issueModel from "../models/issueModel.js";
-
-const changeAvailablity = async (req, res) => {
-    try {
-        const { empId } = req.body;
-
-        const empData = await employeeModel.findById(empId);
-        await employeeModel.findByIdAndUpdate(empId, { available: !empData.available });
-        res.json({
-            success: true,
-            message: "Employee Availability Changed"
-        })
-    } catch (error) {
-        console.log(error);
-        res.json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
-const empList = async (req, res) => {
-    try {
-        const employees = await employeeModel.find({}).select(['-password']);
-        res.json({
-            success: true,
-            employees
-        })
-
-    } catch (error) {
-        console.log(error);
-        res.json({
-            success: false,
-            message: error.message
-        })
-    }
-}
 
 
 // API for employee login
@@ -50,7 +14,7 @@ const loginEmployee = async (req, res) => {
         if (!employee) {
             return res.json({
                 success: false,
-                message: "employee not found"
+                message: "Employee not found"
             })
         }
         
@@ -66,86 +30,6 @@ const loginEmployee = async (req, res) => {
             res.json({
                 success: false,
                 message: "Invalid password"
-            })
-        }
-
-    } catch (error) {
-        console.log(error);
-        res.json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
-
-// API to get employee sensors for employee panel
-const sensorEmployee = async (req, res) => {
-    try {
-        const { empId } = req.body;
-        const sensors = await sensorModel.find({ empId });
-        res.json({
-            success: true,
-            sensors
-        })
-
-
-    } catch (error) {
-        console.log(error);
-        res.json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
-// API to mark sensor as completed for employee panel
-const sensorComplete = async (req, res) => {
-    try {
-        const { empId, sensorId } = req.body;
-
-        const sensorDate = await sensorModel.findById(sensorId);
-
-        if(sensorDate && sensorDate.empId === empId){
-            await sensorModel.findByIdAndUpdate(sensorId, { isCompleted: true });
-            res.json({
-                success: true,
-                message: "Issue Solved"
-            })
-        } else {
-            res.json({
-                success: false,
-                message: "Issue Not Found"
-            })
-        }
-
-    } catch (error) {
-        console.log(error);
-        res.json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
-
-// API to cancel sensor issue for employee panel
-const sensorCancel = async (req, res) => {
-    try {
-        const { empId, sensorId } = req.body;
-
-        const sensorDate = await sensorModel.findById(sensorId);
-
-        if(sensorDate && sensorDate.empId === empId){
-            await sensorModel.findByIdAndUpdate(sensorId, { cancelled: true });
-            res.json({
-                success: true,
-                message: "Issue Request Cancelled"
-            })
-        } else {
-            res.json({
-                success: false,
-                message: "Cancellation Failed"
             })
         }
 
@@ -182,108 +66,100 @@ const employeeDashboard = async (req, res) => {
     }
 }
 
-//API to get employee profile for employee panel
-const employeeProfile = async (req, res) => {
+const getEmployeeProfile = async (req, res) => {
     try {
-        const { empId } = req.body;
-        const profileData = await employeeModel.findById(empId).select('-password');
-        res.json({
-            success: true,
-            profileData
-        })
-
-
+        const employee = await employeeModel.findById(req.employeeId).select('-password');
+        if (!employee) {
+            return res.status(404).json({ success: false, message: "Employee not found" });
+        }
+        res.json({ success: true, employee });
     } catch (error) {
-        console.log(error);
-        res.json({
-            success: false,
-            message: error.message
-        })
+        res.status(500).json({ success: false, message: "Server error" });
     }
-}
+};
 
-// API to update employee profile for employee panel
+// Update employee profile
 const updateEmployeeProfile = async (req, res) => {
     try {
-        const { empId, available } = req.body;
+        const updateFields = {};
+        const allowedFields = ['name', 'email', 'experience'];
+        allowedFields.forEach(field => {
+            if (req.body[field] !== undefined) {
+                updateFields[field] = req.body[field];
+            }
+        });
 
-        await employeeModel.findByIdAndUpdate(empId, { available });
+        const employee = await employeeModel.findByIdAndUpdate(
+            req.employeeId,
+            { $set: updateFields },
+            { new: true, select: '-password' }
+        );
 
-        res.json({
-            success: true,
-            message: "Profile Updated"
-        })
-
-
+        if (!employee) {
+            return res.status(404).json({ success: false, message: "Employee not found" });
+        }
+        res.json({ success: true, employee });
     } catch (error) {
-        console.log(error);
-        res.json({
-            success: false,
-            message: error.message
-        })
+        res.status(500).json({ success: false, message: "Server error" });
     }
-}
+};
 
-// API for employee to complete/cancel/update task status
-const completedTask = async (req, res) => {
+//Update the issue
+const updateIssueById = async (req, res) => {
     try {
-        const { empId, issueId, status } = req.body;
+        const issueId = req.params.id;
+        const updates = req.body;
 
-        if (!empId || !issueId || !status) {
-            return res.json({
-                success: false,
-                message: "empId, issueId, and status are required"
-            });
+        const updated = await issueModel.findByIdAndUpdate(issueId, { $set: updates }, { new: true });
+
+        if (!updated) {
+            return res.status(404).json({ success: false, message: "Issue not found" });
         }
 
-        // Find the issue assigned to the employee
-        const issue = await issueModel.findOne({ issueId, empId });
-
-        if (!issue) {
-            return res.json({
-                success: false,
-                message: "No such issue assigned to this employee"
-            });
-        }
-
-        // Validate status input
-        const allowedStatuses = ["completed", "cancelled", "in progress"];
-        if (!allowedStatuses.includes(status)) {
-            return res.json({
-                success: false,
-                message: "Invalid status. Use: completed, cancelled, or in progress"
-            });
-        }
-
-        // Update issue data based on status
-        issue.status = status;
-
-        if (status === "completed") {
-            const date = new Date();
-            issue.completionDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
-            issue.completionTime = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
-        } else {
-            // Clear completion info if not completed
-            issue.completionDate = 0;
-            issue.completionTime = 0;
-        }
-
-        await issue.save();
-
-        return res.json({
-            success: true,
-            message: `Task marked as ${status}`,
-            issue
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.json({
-            success: false,
-            message: error.message
-        });
+        res.json({ success: true, issue: updated });
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Server error" });
     }
-}
+};
 
+const getIssuesByEmployee = async (req, res) => {
+    try {
+        const empId = req.params.empId;
+        const issues = await issueModel.find({ empId });
+        res.json({ success: true, issues });
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Error fetching issues" });
+    }
+};
 
-export { changeAvailablity, empList, loginEmployee, sensorEmployee, sensorComplete, sensorCancel, employeeDashboard, employeeProfile, updateEmployeeProfile, completedTask };
+const updateDeskAcceptedStatus = async (req, res) => {
+    try {
+        const empId = req.params.empId;
+        const { deskAccepted } = req.body;
+
+        const updateFields = {
+            deskAccepted,
+            available_status: !deskAccepted
+        };
+
+        if (!deskAccepted) {
+            updateFields.taskAssignedId = ""; // Clear task assignment if declined
+        }
+
+        const employee = await employeeModel.findOneAndUpdate(
+            { empId },
+            updateFields,
+            { new: true }
+        );
+
+        if (!employee) {
+            return res.status(404).json({ success: false, message: "Employee not found" });
+        }
+
+        res.status(200).json({ success: true, message: "Employee updated", employee });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+export { loginEmployee, employeeDashboard, getEmployeeProfile, updateEmployeeProfile, updateIssueById, getIssuesByEmployee, updateDeskAcceptedStatus };
