@@ -2,50 +2,65 @@ import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import {
     Table, TableBody, TableCell, TableContainer,
-    TableHead, TableRow, Paper
+    TableHead, TableRow, Paper, FormControl, Select,
+    MenuItem, InputLabel
 } from '@mui/material';
 import { AdminContext } from '../../context/AdminContext';
 
 const AllSensors = () => {
     const { sensors, aToken, getAllSensors } = useContext(AdminContext);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [valueFilter, setValueFilter] = useState('');
-    const [unitFilter, setUnitFilter] = useState('');
+    const [selectedType, setSelectedType] = useState('');
     const [visibleCount, setVisibleCount] = useState(8);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (aToken) {
-            getAllSensors();
-        }
+        const fetchSensors = async () => {
+            if (aToken) {
+                setLoading(true);
+                await getAllSensors();
+                setLoading(false);
+            }
+        };
+        fetchSensors();
     }, [aToken]);
 
+    const uniqueTypes = [...new Set(sensors.map((sensor) => sensor.type))];
+
     const filteredSensors = sensors.filter((sensor) => {
-        const lowerSearch = searchTerm.toLowerCase();
-        const matchesNameOrValue =
-            sensor.name.toLowerCase().includes(lowerSearch) ||
-            sensor.type.toLowerCase().includes(lowerSearch);
-
-
-        return matchesNameOrValue;
+        return selectedType === '' || sensor.type === selectedType;
     });
 
-    const visiblesensors = filteredSensors.slice(0, visibleCount);
+    const visibleSensors = filteredSensors.slice(0, visibleCount);
 
     const handleLoadMore = () => {
         setVisibleCount((prev) => prev + 5);
     };
 
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-40">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-primary" />
+            </div>
+        );
+    }
+
     return (
         <div className='w-full overflow-scroll'>
-            {/* Filters */}
-            <div className='flex justify-even mb-3 gap-3'>
-                <input
-                    type="text"
-                    placeholder="Search by name or type"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className='border border-primary rounded-full px-5 py-1.5'
-                />
+            {/* Dropdown Filter for Sensor Type */}
+            <div className='mb-3 w-full'>
+                <FormControl className="w-full">
+                    <InputLabel>Sensor Type</InputLabel>
+                    <Select
+                        value={selectedType}
+                        label="Sensor Type"
+                        onChange={(e) => setSelectedType(e.target.value)}
+                    >
+                        <MenuItem value="">All</MenuItem>
+                        {uniqueTypes.map((type, index) => (
+                            <MenuItem key={index} value={type}>{type}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </div>
 
             {/* Table Display */}
@@ -60,7 +75,7 @@ const AllSensors = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody className='bg-third/20'>
-                        {visiblesensors.map((sensor, index) => (
+                        {visibleSensors.map((sensor, index) => (
                             <TableRow key={index}>
                                 <TableCell>{sensor.name}</TableCell>
                                 <TableCell>{sensor.type}</TableCell>
@@ -75,7 +90,10 @@ const AllSensors = () => {
             {/* Load More Button */}
             {visibleCount < filteredSensors.length && (
                 <div className='mb-5 flex justify-center'>
-                    <button className='bg-primary text-white px-5 py-2 rounded-full' onClick={handleLoadMore}>
+                    <button
+                        className='bg-primary text-white px-5 py-2 rounded-full'
+                        onClick={handleLoadMore}
+                    >
                         Load More
                     </button>
                 </div>

@@ -8,11 +8,13 @@ import SensorsIcon from '@mui/icons-material/Sensors';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import WarningIcon from '@mui/icons-material/Warning';
 import AddTaskIcon from '@mui/icons-material/AddTask';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 
 const Sidebar = () => {
 
   const { aToken } = useContext(AdminContext);
-  const { dToken } = useContext(EmployeeContext);
+  const { eToken } = useContext(EmployeeContext);
 
 
   return (
@@ -53,10 +55,20 @@ const Sidebar = () => {
       }
 
       {
-        dToken && <ul className='text-primary flex flex-col gap-3'>
+        eToken && <ul className='text-primary flex flex-col gap-3'>
           <NavLink className={({ isActive }) => `flex border-2 border-primary items-center gap-2 rounded-r-full w-fit p-3 md:w-[200px] cursor-pointer ${isActive ? 'bg-primary text-white/90 border-l-0 md:mr-4' : 'border-2 border-r-0 rounded-l-full rounded-r-none md:ml-4'}`} to='/'>
             <DashboardIcon />
             <p className='hidden md:block'>Dashboard</p>
+          </NavLink>
+
+          <NavLink className={({ isActive }) => `flex border-2 border-primary items-center gap-2 rounded-r-full w-fit p-3 md:w-[200px] cursor-pointer ${isActive ? 'bg-primary text-white/90 border-l-0 md:mr-4' : 'border-2 border-r-0 rounded-l-full rounded-r-none md:ml-4'}`} to='/profile'>
+            <AccountBoxIcon />
+            <p className='hidden md:block'>Profile</p>
+          </NavLink>
+
+          <NavLink className={({ isActive }) => `flex border-2 border-primary items-center gap-2 rounded-r-full w-fit p-3 md:w-[200px] cursor-pointer ${isActive ? 'bg-primary text-white/90 border-l-0 md:mr-4' : 'border-2 border-r-0 rounded-l-full rounded-r-none md:ml-4'}`} to='/all-tasks'>
+            <TaskAltIcon />
+            <p className='hidden md:block'>All Tasks</p>
           </NavLink>
         </ul>
       }

@@ -12,6 +12,7 @@ const AdminContextProvider = (props) => {
 
     const [employees, setEmployees] = useState([]);
     const [sensors, setSensors] = useState([]);
+    const [issues, setIssues] = useState([]);
 
 
     // Getting all the employees list.
@@ -58,9 +59,118 @@ const AdminContextProvider = (props) => {
         }
     }
 
+    // Get all issues
+    const getAllIssues = async () => {
+        try {
+            const { data } = await axios.post(backendUrl + '/api/admin/issues',{}, {
+                headers: { aToken }
+            });
+            if (data.success) {
+                setIssues(data.issues);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
+
+    // Update employee
+    const updateEmployee = async (id, updatedData) => {
+        try {
+            const { data } = await axios.put(
+                backendUrl + `/api/admin/employee/${id}`,
+                updatedData,
+                { headers: { aToken } }
+            );
+            if (data.success) {
+                toast.success(data.message);
+                getAllEmployees();
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
+
+    // Delete employee
+    const deleteEmployee = async (id) => {
+        try {
+            const { data } = await axios.delete(
+                backendUrl + `/api/admin/employee/${id}`,
+                { headers: { aToken } }
+            );
+            if (data.success) {
+                toast.success(data.message);
+                getAllEmployees();
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
+
+    // Get dashboard data
+    const getDashboardData = async () => {
+        try {
+            const { data } = await axios.get(backendUrl + '/api/admin/dashboard', {
+                headers: { aToken }
+            });
+            if (data.success) {
+                return data.dashData;
+            } else {
+                toast.error(data.message);
+                return null;
+            }
+        } catch (error) {
+            toast.error(error.message);
+            return null;
+        }
+    };
+
+    // Update issue status
+    const updateIssueStatus = async (issueId, status) => {
+    try {
+        const { data } = await axios.put(
+            backendUrl + '/api/admin/issue/status',
+            { issueId, status },
+            { headers: { aToken } }
+        );
+        if (data.success) {
+            toast.success(data.message);
+            getAllIssues();
+        } else {
+            toast.error(data.message);
+        }
+    } catch (error) {
+        toast.error(error.message);
+    }
+};
+
+    // Update issue priority
+    const updateIssuePriority = async (issueId, priority) => {
+        try {
+            const { data } = await axios.put(
+                backendUrl + '/api/admin/issue/priority',
+                { issueId, priority },
+                { headers: { aToken } }
+            );
+            if (data.success) {
+                toast.success(data.message);
+                getAllIssues();
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
+
 
     const value = {
-        aToken, setAToken, getAllEmployees, employees, getAllSensors, sensors
+        aToken, setAToken, getAllEmployees, employees, getAllSensors, sensors, getAllIssues, issues, updateEmployee, deleteEmployee, getDashboardData, updateIssueStatus, updateIssuePriority
     };
 
     return (

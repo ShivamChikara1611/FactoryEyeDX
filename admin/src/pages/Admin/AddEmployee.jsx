@@ -3,7 +3,6 @@ import { AdminContext } from "../../context/AdminContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-
 const AddEmployee = () => {
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;

@@ -7,7 +7,7 @@ import FactoryIcon from '@mui/icons-material/Factory';
 const Navbar = () => {
 
   const { aToken, setAToken } = useContext(AdminContext);
-  const { dToken, setDToken } = useContext(EmployeeContext);
+  const { eToken, setEToken } = useContext(EmployeeContext);
 
   const navigate = useNavigate();
 
@@ -17,8 +17,8 @@ const Navbar = () => {
     aToken && setAToken("");
     aToken && localStorage.removeItem('aToken');
 
-    dToken && setDToken("");
-    dToken && localStorage.removeItem('dToken');
+    eToken && setEToken("");
+    eToken && localStorage.removeItem('eToken');
   }
 
 

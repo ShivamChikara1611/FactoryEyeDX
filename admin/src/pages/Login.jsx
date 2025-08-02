@@ -1,4 +1,4 @@
-import React,{useContext, useState} from "react";
+import React, { useContext, useState } from "react";
 import { AdminContext } from "../context/AdminContext";
 import { EmployeeContext } from "../context/EmployeeContext";
 import axios from "axios";
@@ -11,8 +11,8 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const {setAToken} = useContext(AdminContext);
-    const {setDToken} = useContext(EmployeeContext);
+    const { setAToken } = useContext(AdminContext);
+    const { setEToken } = useContext(EmployeeContext);
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -20,9 +20,9 @@ const Login = () => {
     const onSubmitHandler = async (event) => {
         event.preventDefault();
 
-        try{
+        try {
 
-            if(state === 'Admin'){
+            if (state === 'Admin') {
 
                 const { data } = await axios.post(backendUrl + '/api/admin/login', { email, password });
 
@@ -31,33 +31,39 @@ const Login = () => {
                     setAToken(data.token);
                     toast.success("Admin logged in Successfully");
                 }
-                else{
+                else {
                     toast.error(data.message);
                 }
 
             } else if (state === 'Employee') {
-                const {data} = await axios.post(backendUrl + '/api/employee/login', { email, password });
+                const { data } = await axios.post(backendUrl + '/api/employee/login', { email, password });
 
                 if (data.success) {
-                    localStorage.setItem('dToken', data.token);
-                    setDToken(data.token);
-                    console.log(data.token);
+                    localStorage.setItem('eToken', data.token);
+                    setEToken(data.token);
                     toast.success("Employee logged in Successfully");
+
+                    // Fetch profile after login
+                    const profileRes = await axios.get(backendUrl + '/api/employee/profile', {
+                        headers: { Authorization: `Bearer ${data.token}` }
+                    });
+                    if (profileRes.data.success) {
+                        setEmployeeProfile(profileRes.data.employee);
+                    }
                 }
-                else{
+                else {
                     toast.error(data.message);
                 }
-
             }
         }
-        catch(error){
+        catch (error) {
             console.log(error.response);
             toast.error(error.message);
         }
     };
 
 
-    return(
+    return (
         <form onSubmit={onSubmitHandler} className="min-h-[80vh] flex items-center text-gray-800">
             <div className="border-2 border-opacity-70 border-primary flex flex-col gap-4 m-auto items-start p-5 sm:p-10 w-fit] sm:min-w-96 rounded-xl text-gray-800 text-sm">
                 <p className="text-2xl font-semibold m-auto"><span className="text-primary"> {state} </span> Login</p>

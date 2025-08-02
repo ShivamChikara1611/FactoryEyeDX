@@ -14,11 +14,13 @@ import AddEmployee from './pages/Admin/AddEmployee.jsx';
 import AllSensors from './pages/Admin/AllSensors.jsx';
 import AllIssues from './pages/Admin/AllIssues.jsx';
 import AssignTask from './pages/Admin/AssignTask.jsx';
+import Profile from './pages/Employee/Profile.jsx';
+import Tasks from './pages/Employee/Tasks.jsx';
 
 
 const App = () => {
   const { aToken } = useContext(AdminContext);
-  const { dToken } = useContext(EmployeeContext);
+  const { eToken } = useContext(EmployeeContext);
 
   return aToken ? (
     <div className='bg-[#F8F9FD]'>
@@ -33,20 +35,21 @@ const App = () => {
           <Route path='/all-employees' element={<AllEmployees />} />
           <Route path='/add-employee' element={<AddEmployee />} />
           <Route path='/sensors' element={<AllSensors />} />
-          <Route path='/sensors' element={<AllSensors />} />
           <Route path='/issues' element={<AllIssues />} />
           <Route path='/assign-task' element={<AssignTask />} />
         </Routes>
       </div>
     </div>
-  ) : dToken ? (
+  ) : eToken ? (
     <div className='bg-[#F8F9FD]'>
       <ToastContainer />
       <Navbar />
-      <div className='flex items-start'>
+      <div className='flex items-start md:gap-8'>
         <Sidebar />
         <Routes>
           <Route path='/' element={<EDashboard />} />
+          <Route path='/profile' element={<Profile />} />
+          <Route path='/all-tasks' element={<Tasks />} />
         </Routes>
       </div>
     </div>

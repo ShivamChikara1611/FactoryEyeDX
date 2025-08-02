@@ -4,12 +4,14 @@ import { createContext} from "react";
 export const EmployeeContext = createContext();
 
 const EmployeeContextProvider = (props) => {
-
-    const [dToken, setDToken] = useState(localStorage.getItem('dToken')?localStorage.getItem('dToken'):"");
+    const [eToken, setEToken] = useState(localStorage.getItem('eToken') ? localStorage.getItem('eToken') : "");
+    const [employeeProfile, setEmployeeProfile] = useState(null);
 
     const value = {
-        dToken,
-        setDToken,
+        eToken,
+        setEToken,
+        employeeProfile,
+        setEmployeeProfile,
     }
 
     return (
