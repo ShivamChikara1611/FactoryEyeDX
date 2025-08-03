@@ -1,5 +1,5 @@
 # Ignore environment variable files
-echo ".env" >> .gitignore
+.env
 
 
 # Ignore log files
