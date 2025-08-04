@@ -23,21 +23,25 @@ const App = () => {
   const { eToken } = useContext(EmployeeContext);
 
   return aToken ? (
-    <div className='bg-[#F8F9FD]'>
+    <div className='relative h-screen bg-primary w-full'>
       <ToastContainer />
-      <div className='w-full'>
+      <div className='fixed top-5 left-0 right-0 w-full flex justify-center'>
         <Navbar />
       </div>
-      <div className='flex items-start md:gap-8'>
-        <Sidebar />
-        <Routes>
-          <Route path='/' element={<ADashboard />} />
-          <Route path='/all-employees' element={<AllEmployees />} />
-          <Route path='/add-employee' element={<AddEmployee />} />
-          <Route path='/sensors' element={<AllSensors />} />
-          <Route path='/issues' element={<AllIssues />} />
-          <Route path='/assign-task' element={<AssignTask />} />
-        </Routes>
+      <div className='flex h-full'>
+        <div className='w-[280px] px-3 py-10 top-0 left-0 bg-main'>
+          <Sidebar />
+        </div>
+        <div className='w-full mt-[90px] mx-5 h-[86vh]'>
+          <Routes>
+            <Route path='/' element={<ADashboard />} />
+            <Route path='/all-employees' element={<AllEmployees />} />
+            <Route path='/add-employee' element={<AddEmployee />} />
+            <Route path='/sensors' element={<AllSensors />} />
+            <Route path='/issues' element={<AllIssues />} />
+            <Route path='/assign-task' element={<AssignTask />} />
+          </Routes>
+        </div>
       </div>
     </div>
   ) : eToken ? (

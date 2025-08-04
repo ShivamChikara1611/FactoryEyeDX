@@ -23,16 +23,15 @@ const Navbar = () => {
 
 
   return (
-    <div className='bg-primary mx-[50px] lg:mx-[300px] my-5 rounded-full flex justify-between items-center text-white py-3 px-[50px]'>
-      <div className='flex items-center justify-between gap-8'>
-        <div className='flex items-center justify-between text-md font-bold gap-1'>
-          <FactoryIcon />
-          <h6 className=''>FactoryEyeDX</h6>
+    <div className='bg-main w-full mx-[25%] flex justify-between px-10 py-3 rounded-full text-sm mb-5 text-white'>
+      <div className='flex gap-8 items-center'>
+        <div className='font-semibold italic text-xl'>
+          <h6>FactoryEyeDX</h6>
         </div>
-        <p className='border-2 border-white/90 text-white/90 text-xs px-3 py-1 rounded-full'>{aToken ? 'Admin' : 'Employee'}</p>
+        <p className='text-xs border px-3 py-1 rounded-full'>{aToken ? 'Admin' : 'Employee'}</p>
       </div>
 
-      <button onClick={logout} className='border-2 border-white/90 bg-white/90 px-3 py-1 rounded-full text-primary text-xs'>Logout</button>
+      <button onClick={logout} className='border bg-transparent px-5 py-1 rounded-full font-semibold hover:text-main hover:bg-primary duration-200 ease-in'>Logout</button>
     </div>
   )
 }

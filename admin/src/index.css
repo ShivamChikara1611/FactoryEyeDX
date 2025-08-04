@@ -6,12 +6,8 @@
 
 *{
     font-family: 'poppins';
-}
-
-body{
     margin: 0;
     padding: 0;
-    background-color: #F8F9FD;
 }
 
 ::-webkit-scrollbar {

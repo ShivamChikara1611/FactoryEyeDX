@@ -75,15 +75,15 @@ const AllEmployees = () => {
 };
 
     return (
-        <div className='w-full overflow-scroll'>
+        <div className='overflow-scroll relative'>
             {/* Filters */}
-            <div className='flex justify-even mb-3 gap-3'>
+            <div className='fixed flex mb-3 gap-3 right-5'>
                 <input
                     type="text"
-                    placeholder="Search by name or email"
+                    placeholder="Search by name or email . . ."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className='border border-primary rounded-full px-5 py-1.5'
+                    className='rounded-full px-5 py-1.5 w-[300px]'
                 />
 
                 <select
@@ -110,9 +110,9 @@ const AllEmployees = () => {
             </div>
 
             {/* Table Display */}
-            <TableContainer component={Paper} className='mb-5'>
+            <TableContainer component={Paper} className='mt-[50px] overflow-scroll h-[70vh]'>
                 <Table sx={{ minWidth: 700 }} aria-label="employee table">
-                    <TableHead className='bg-third'>
+                    <TableHead className='bg-white'>
                         <TableRow>
                             <TableCell>Emp ID</TableCell>
                             <TableCell>Name</TableCell>
@@ -124,7 +124,7 @@ const AllEmployees = () => {
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody className='bg-third/20'>
+                    <TableBody className='bg-primary'>
                         {visibleEmployees.map((employee, index) => (
                             <TableRow key={index}>
                                 <TableCell>{employee.empId}</TableCell>
@@ -158,15 +158,6 @@ const AllEmployees = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-
-            {/* Load More Button */}
-            {visibleCount < filteredEmployees.length && (
-                <div className='mb-5 flex justify-center'>
-                    <button className='bg-primary text-white px-5 py-2 rounded-full' onClick={handleLoadMore}>
-                        Load More
-                    </button>
-                </div>
-            )}
 
             {/* Edit Modal */}
             <Modal open={editModalOpen} onClose={() => setEditModalOpen(false)}>
@@ -224,6 +215,15 @@ const AllEmployees = () => {
                     </form>
                 </Box>
             </Modal>
+
+            {/* Load More Button */}
+            {visibleCount < filteredEmployees.length && (
+                <div className='left-1/2 fixed bottom-2'>
+                    <button className='bg-main text-white px-5 py-2 rounded-full' onClick={handleLoadMore}>
+                        Load More
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
