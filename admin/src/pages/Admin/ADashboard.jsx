@@ -25,7 +25,7 @@ const ADashboard = () => {
 
     if (!dashboard) return <div className="p-10 text-center">Loading dashboard...</div>;
 
-    // Prepare chart data
+    // Prepare chart
     const sensorTypeData = Object.entries(dashboard.sensorsByType).map(([type, count]) => ({ type, count }));
     const avgSensorData = Object.entries(dashboard.avgValuesByType).map(([type, avg]) => ({ type, avg }));
     const statusData = [
